@@ -10,21 +10,24 @@ import java.util.List;
 public interface AdminService {
 
     // --- Admin ---
-    public Admin checkAdminLogin(String username, String password);
+    Admin checkAdminLogin(String username, String password);
 
     // --- Creator ---
-    public String addCreator(Creator creator);
-    public List<Creator> displayCreators();
-    public String deleteCreator(int id);
-    public long displayCreatorCount();
+    String addCreator(Creator creator);
+    List<Creator> displayCreators();
+    String deleteCreator(int id);
+    long displayCreatorCount();
 
     // --- Donor ---
-    public List<Donor> displayDonors();
-    public long displayDonorCount();
+    List<Donor> displayDonors();
+    long displayDonorCount();
 
     // --- Campaign ---
-    public String addCampaign(Campaign campaign);
-    public List<Campaign> displayCampaigns();
-    public String deleteCampaign(int id);
-    public long displayCampaignCount();
+    String addCampaign(Campaign campaign);
+    List<Campaign> displayCampaigns();
+    String deleteCampaign(int id);
+    long displayCampaignCount();
+
+    // --- Donation Summary ---
+    long totalDonations();
 }

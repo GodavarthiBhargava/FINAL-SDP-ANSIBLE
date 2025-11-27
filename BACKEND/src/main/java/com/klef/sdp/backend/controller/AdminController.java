@@ -23,11 +23,8 @@ public class AdminController {
     @PostMapping("/login")
     public ResponseEntity<?> checkAdminLogin(@RequestBody Admin admin) {
         Admin a = adminService.checkAdminLogin(admin.getUsername(), admin.getPassword());
-        if (a != null) {
-            return ResponseEntity.ok(a);
-        } else {
-            return ResponseEntity.status(401).body("Invalid Username or Password");
-        }
+        if (a != null) return ResponseEntity.ok(a);
+        return ResponseEntity.status(401).body("Invalid Username or Password");
     }
 
     // ---------------- Creator Management ----------------
@@ -81,5 +78,11 @@ public class AdminController {
     @GetMapping("/campaigncount")
     public ResponseEntity<Long> campaignCount() {
         return ResponseEntity.ok(adminService.displayCampaignCount());
+    }
+
+    // ---------------- Donation Summary ----------------
+    @GetMapping("/donationsummary")
+    public ResponseEntity<Long> totalDonations() {
+        return ResponseEntity.ok(adminService.totalDonations());
     }
 }

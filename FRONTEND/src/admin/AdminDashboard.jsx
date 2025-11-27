@@ -7,8 +7,11 @@ const API_URL = `${import.meta.env.VITE_API_URL}/admin`;
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     donorCount: 0,
-    creatorCount: 0
+    creatorCount: 0,
+    campaignCount: 0,
+    totalDonations: 0
   });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,14 +19,18 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
 
-        const [donorRes, creatorRes] = await Promise.all([
+        const [donorRes, creatorRes, campaignRes, donationRes] = await Promise.all([
           axios.get(`${API_URL}/donorcount`),
-          axios.get(`${API_URL}/creatorcount`)
+          axios.get(`${API_URL}/creatorcount`),
+          axios.get(`${API_URL}/campaigncount`),
+          axios.get(`${API_URL}/donationsummary`)
         ]);
 
         setStats({
           donorCount: donorRes.data,
-          creatorCount: creatorRes.data
+          creatorCount: creatorRes.data,
+          campaignCount: campaignRes.data,
+          totalDonations: donationRes.data
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -58,17 +65,34 @@ export default function AdminDashboard() {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon">💰</div> {/* Donor icon */}
+          <div className="stat-icon">💰</div>
           <div className="stat-content">
             <h3>{stats.donorCount}</h3>
             <p>Total Donors</p>
           </div>
         </div>
+
         <div className="stat-card">
-          <div className="stat-icon">🎯</div> {/* Campaign creator icon */}
+          <div className="stat-icon">🎯</div>
           <div className="stat-content">
             <h3>{stats.creatorCount}</h3>
-            <p>Total Campaign Creators</p>
+            <p>Total Creators</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-icon">📈</div>
+          <div className="stat-content">
+            <h3>{stats.campaignCount}</h3>
+            <p>Total Campaigns</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-icon">💵</div>
+          <div className="stat-content">
+            <h3>₹{stats.totalDonations}</h3>
+            <p>Total Donations</p>
           </div>
         </div>
       </div>

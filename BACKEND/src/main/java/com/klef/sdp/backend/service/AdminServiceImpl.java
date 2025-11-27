@@ -8,6 +8,7 @@ import com.klef.sdp.backend.repository.AdminRepository;
 import com.klef.sdp.backend.repository.CampaignRepository;
 import com.klef.sdp.backend.repository.CreatorRepository;
 import com.klef.sdp.backend.repository.DonorRepository;
+import com.klef.sdp.backend.repository.DonationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private CampaignRepository campaignRepository;
+
+    @Autowired
+    private DonationRepository donationRepository;
 
     // ---------------- Admin ----------------
     @Override
@@ -98,5 +102,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public long displayCampaignCount() {
         return campaignRepository.count();
+    }
+
+    // ---------------- Donation Summary ----------------
+    @Override
+    public long totalDonations() {
+        return donationRepository.sumAllDonations();
     }
 }
