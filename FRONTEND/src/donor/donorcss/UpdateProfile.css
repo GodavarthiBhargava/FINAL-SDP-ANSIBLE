@@ -6,8 +6,8 @@
   --error-color: #c62828;
   --bg-light: #f5f7fa;
   --text-dark: #333;
-  --shadow-md: 0 6px 20px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 25px rgba(0,0,0,0.1);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 25px rgba(0, 0, 0, 0.1);
 }
 
 .donor-update-container {
@@ -21,7 +21,7 @@
   animation: fadeIn 0.4s ease;
 }
 
-.update-heading {
+.donor-update-container h3 {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
@@ -29,8 +29,9 @@
   margin-bottom: 1.5rem;
 }
 
-.success-message,
-.error-message {
+.success {
+  background: #eafaf1;
+  color: var(--success-color);
   text-align: center;
   font-weight: 600;
   border-radius: 10px;
@@ -39,10 +40,18 @@
   font-size: 0.95rem;
 }
 
-.success-message { background: #eafaf1; color: var(--success-color); }
-.error-message { background: #fdecea; color: var(--error-color); }
+.error {
+  background: #fdecea;
+  color: var(--error-color);
+  text-align: center;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+}
 
-.update-form {
+form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
@@ -52,14 +61,14 @@
   box-shadow: var(--shadow-md);
 }
 
-.update-form label {
+form label {
   font-weight: 600;
   margin-bottom: 6px;
   color: var(--primary-color);
   font-size: 0.9rem;
 }
 
-.update-form input {
+form input {
   width: 100%;
   padding: 10px 14px;
   border-radius: 10px;
@@ -68,13 +77,13 @@
   transition: all 0.2s ease;
 }
 
-.update-form input:focus {
+form input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 5px rgba(66, 165, 245, 0.3);
   outline: none;
 }
 
-.update-btn {
+button[type="submit"] {
   grid-column: span 2;
   margin-top: 10px;
   padding: 14px;
@@ -88,7 +97,7 @@
   transition: all 0.3s ease;
 }
 
-.update-btn:hover {
+button[type="submit"]:hover {
   background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
@@ -96,6 +105,16 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .update-form { grid-template-columns: 1fr; }
-  .update-btn { grid-column: span 1; }
+  form {
+    grid-template-columns: 1fr;
+  }
+  button[type="submit"] {
+    grid-column: span 1;
+  }
+}
+
+/* Optional fade-in animation */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }

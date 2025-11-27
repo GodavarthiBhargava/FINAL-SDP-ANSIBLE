@@ -1,7 +1,3 @@
-/* ================================
-   Donor Dashboard Styles (Matching Creator Dashboard)
-   ================================ */
-
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -15,16 +11,14 @@
 .dashboard-container h2 {
   text-align: center;
   margin-bottom: 40px;
-  color: #0F4C75;
+  color: #0f4c75;
   font-size: 2.2rem;
   font-weight: 700;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Stats Cards */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
   margin-bottom: 40px;
 }
@@ -35,9 +29,9 @@
   padding: 24px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .stat-card::before {
@@ -47,7 +41,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #3282B8, #0F4C75);
+  background: linear-gradient(90deg, #3282b8, #0f4c75);
 }
 
 .stat-card:hover {
@@ -57,7 +51,7 @@
 
 .label {
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   margin-bottom: 8px;
   font-weight: 500;
   text-transform: uppercase;
@@ -65,86 +59,70 @@
 }
 
 .value {
-  color: #0F4C75;
-  font-size: 2.2rem;
+  color: #0f4c75;
+  font-size: 2rem;
   font-weight: 700;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Updated for long text */
+  white-space: normal;       /* allow wrapping */
+  word-wrap: break-word;     /* break long words */
+  overflow-wrap: break-word; 
+  line-height: 1.2;
+  max-height: 4.5rem;        /* approx 2 lines */
+}
+
+/* Chart container */
+.chart-container {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 40px;
+}
+
+.chart-container h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0f4c75;
 }
 
 /* Quick Links */
 .quick-links {
-  margin-top: 40px;
   display: flex;
-  gap: 16px;
   justify-content: center;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .ql {
   padding: 14px 24px;
-  background: linear-gradient(135deg, #3282B8 0%, #0F4C75 100%);
+  background: linear-gradient(135deg, #3282b8, #0f4c75);
   color: #fff;
   border-radius: 12px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(15, 76, 117, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.ql::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.ql:hover::before {
-  left: 100%;
+  text-align: center;
+  min-width: 150px;
 }
 
 .ql:hover {
-  background: linear-gradient(135deg, #0F4C75 0%, #3282B8 100%);
+  background: linear-gradient(135deg, #0f4c75, #3282b8);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(15, 76, 117, 0.4);
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-  .dashboard-container {
-    margin: 0 15px;
-    padding: 20px;
-    border-radius: 16px;
-  }
-
-  .dashboard-container h2 {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-  }
-
   .cards {
     grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 30px;
-  }
-
-  .stat-card {
-    padding: 20px;
   }
 
   .value {
     font-size: 1.8rem;
+    max-height: 5rem; /* allow slightly bigger for small screens */
   }
 
-  .quick-links {
-    margin-top: 30px;
-    gap: 12px;
+  .chart-container {
+    padding: 15px;
   }
 
   .ql {

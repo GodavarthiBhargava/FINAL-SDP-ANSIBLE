@@ -51,7 +51,7 @@ export default function DonorList() {
 
   return (
     <div className="mycampaigns-container">
-      <h2>Donations (Local)</h2>
+      <h2>Donations</h2>
       {error && <p className="error-message">{error}</p>}
       {rows.length === 0 ? (
         <p>No donations recorded in this browser.</p>

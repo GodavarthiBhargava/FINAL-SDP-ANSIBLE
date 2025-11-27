@@ -1,3 +1,4 @@
+// src/components/DonorLogin.jsx
 import { useState } from "react";
 import { FiUser, FiLock } from "react-icons/fi";
 import "./donorcss/DonorLogin.css";
@@ -21,10 +22,19 @@ export default function DonorLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
+
     try {
       const res = await axios.post(`${API_URL}/checklogin`, formData);
       if (res.status === 200) {
-        sessionStorage.setItem("donor", JSON.stringify(res.data));
+        const donor = res.data;
+
+        // For older logic if needed
+        sessionStorage.setItem("donor", JSON.stringify(donor));
+        // New global storage
+        localStorage.setItem("currentDonor", JSON.stringify(donor));
+
         setIsDonorLoggedIn(true);
         navigate("/donor/dashboard");
       } else {
@@ -46,16 +56,30 @@ export default function DonorLogin() {
           <label htmlFor="username">Username</label>
           <div className="input-group">
             <FiUser className="input-icon" />
-            <input type="text" id="username" value={formData.username} onChange={handleChange} required />
+            <input
+              type="text"
+              id="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <label htmlFor="password">Password</label>
           <div className="input-group">
             <FiLock className="input-icon" />
-            <input type="password" id="password" value={formData.password} onChange={handleChange} required />
+            <input
+              type="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <button type="submit" className="signin-button">Sign In</button>
+          <button type="submit" className="signin-button">
+            Sign In
+          </button>
         </form>
 
         <p className="signup-link">

@@ -1,3 +1,4 @@
+// src/components/DonorRegistration.jsx
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -32,7 +33,6 @@ export default function DonorRegistration() {
       if (response.status === 200) {
         setMessage(response.data);
         setError("");
-        // reset form
         setFormData({
           name: "",
           email: "",
@@ -46,7 +46,6 @@ export default function DonorRegistration() {
       }
     } catch (err) {
       setMessage("");
-      // Backend will send messages like "Username already exists", "Email already exists", etc.
       setError(err.response?.data || "An unexpected error occurred.");
     }
   };

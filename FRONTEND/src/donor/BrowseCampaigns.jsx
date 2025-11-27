@@ -9,122 +9,190 @@ export default function BrowseCampaigns() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
 
-  const API_URL = `${import.meta.env.VITE_API_URL}/campaign`;
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [amountInput, setAmountInput] = useState("");
+  const [messageInput, setMessageInput] = useState("");
+  const [formError, setFormError] = useState("");
 
-  useEffect(() => {
-    fetchCampaigns();
-  }, []);
+  // Page-level messages (top of page)
+  const [pageMessage, setPageMessage] = useState("");
+  const [pageMessageType, setPageMessageType] = useState(""); // "success" | "error" | ""
+
+  const CAMPAIGN_API = `${import.meta.env.VITE_API_URL}/campaign`;
+  const DONATION_API = `${import.meta.env.VITE_API_URL}/donation`;
+
+  const getCurrentDonor = () => {
+    try {
+      const raw = localStorage.getItem("currentDonor");
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
 
   const fetchCampaigns = async () => {
     try {
-      const response = await axios.get(`${API_URL}/all`);
+      const response = await axios.get(`${CAMPAIGN_API}/all`);
 
-      // Only active campaigns for donors
       const activeCampaigns = response.data
         .filter((c) => c.status === "Active")
         .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
-      // Merge stored donations for display
-      const merged = activeCampaigns.map((c) => {
-        const extra = getStoredDonationsFor(c.id);
-        return { ...c, collectedAmount: (c.collectedAmount || 0) + extra };
-      });
-
-      setCampaigns(merged);
+      setCampaigns(activeCampaigns);
       setError("");
     } catch (err) {
       setError("Failed to fetch campaigns: " + err.message);
     }
   };
 
-  const getStoredDonations = () => {
-    try {
-      const raw = localStorage.getItem("donations");
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  };
-
-  const getStoredDonationsFor = (campaignId) => {
-    const map = getStoredDonations();
-    return Number(map[campaignId] || 0);
-  };
-
-  const setStoredDonationFor = (campaignId, amount) => {
-    const map = getStoredDonations();
-    const prev = Number(map[campaignId] || 0);
-    map[campaignId] = prev + amount;
-    localStorage.setItem("donations", JSON.stringify(map));
-  };
-
-  // One-time migration from sessionStorage -> localStorage if needed
   useEffect(() => {
-    try {
-      const sessionRaw = sessionStorage.getItem("donations");
-      if (sessionRaw && !localStorage.getItem("donations")) {
-        localStorage.setItem("donations", sessionRaw);
-      }
-    } catch {}
+    fetchCampaigns();
   }, []);
 
-  const handleDonate = (campaign) => {
+  const handleDonateClick = (campaign) => {
+    const donor = getCurrentDonor();
+    if (!donor) {
+      // login-related still okay to alert + redirect
+      alert("Please log in as a donor before donating.");
+      window.location.href = "/donor/login";
+      return;
+    }
+
     const currentRaised = Number(campaign.collectedAmount || 0);
     const goal = Number(campaign.goalAmount || 0);
     const remaining = Math.max(0, goal - currentRaised);
     if (remaining <= 0) {
-      alert("This campaign is already fully funded.");
+      setPageMessageType("error");
+      setPageMessage("This campaign is already fully funded. Thank you for your interest!");
       return;
     }
 
-    const input = prompt(`Enter amount to donate (max ₹${remaining}):`, "");
-    if (!input) return;
-    const value = Number(input);
-    if (!Number.isFinite(value) || value <= 0) {
-      alert("Please enter a valid amount.");
-      return;
-    }
-    if (value > remaining) {
-      alert(`Amount exceeds remaining goal (₹${remaining}).`);
-      return;
-    }
-
-    // Persist and update UI state
-    setStoredDonationFor(campaign.id, value);
-    setCampaigns((prev) =>
-      prev.map((c) =>
-        c.id === campaign.id
-          ? { ...c, collectedAmount: Number(c.collectedAmount || 0) + value }
-          : c
-      )
-    );
-    alert("Thank you for your donation!");
+    setSelectedCampaign(campaign);
+    setAmountInput("");
+    setMessageInput("");
+    setFormError("");
+    setShowModal(true);
   };
 
-  // Filter campaigns based on search and category
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedCampaign(null);
+    setAmountInput("");
+    setMessageInput("");
+    setFormError("");
+  };
+
+  const handleDonationSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedCampaign) return;
+
+    const donor = getCurrentDonor();
+    if (!donor) {
+      setFormError("Session expired. Please log in again.");
+      setPageMessageType("error");
+      setPageMessage("Session expired. Please log in again to donate.");
+      return;
+    }
+
+    const currentRaised = Number(selectedCampaign.collectedAmount || 0);
+    const goal = Number(selectedCampaign.goalAmount || 0);
+    const remaining = Math.max(0, goal - currentRaised);
+
+    const amount = Number(amountInput);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      const msg = "Please enter a valid donation amount.";
+      setFormError(msg);
+      setPageMessageType("error");
+      setPageMessage(msg);
+      return;
+    }
+    if (amount > remaining) {
+      const msg = `Amount exceeds remaining goal (₹${remaining}). Please enter ₹${remaining} or less.`;
+      setFormError(msg);
+      setPageMessageType("error");
+      setPageMessage(msg);
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${DONATION_API}/add`, {
+        donorId: donor.id,
+        campaignId: selectedCampaign.id,
+        amount,
+        message: messageInput || "",
+      });
+
+      if (res.status === 200) {
+        // update UI
+        setCampaigns((prev) =>
+          prev.map((c) =>
+            c.id === selectedCampaign.id
+              ? { ...c, collectedAmount: Number(c.collectedAmount || 0) + amount }
+              : c
+          )
+        );
+
+        // success message on page
+        setPageMessageType("success");
+        setPageMessage(
+          `Thank you, ${donor.name}! You donated ₹${amount} to "${selectedCampaign.title}".`
+        );
+
+        handleCloseModal();
+        // optionally scroll to top so message is visible
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const msg = "Donation failed. Please try again.";
+        setFormError(msg);
+        setPageMessageType("error");
+        setPageMessage(msg);
+      }
+    } catch (err) {
+      const msg = err.response?.data || "Error processing donation. Please try again.";
+      setFormError(msg);
+      setPageMessageType("error");
+      setPageMessage(msg);
+    }
+  };
+
   const filteredCampaigns = campaigns.filter((c) => {
     const query = search.toLowerCase();
     const matchesSearch =
       c.title?.toLowerCase().includes(query) ||
       c.description?.toLowerCase().includes(query) ||
       c.category?.toLowerCase().includes(query);
-    
+
     const matchesCategory =
       categoryFilter === "All" ||
       c.category?.toLowerCase() === categoryFilter.toLowerCase();
-    
+
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="browsecampaigns-container">
-      <h2>Browse Campaigns</h2>
+    <div className="shop-container">
+      <h2 className="shop-heading">Browse Campaigns</h2>
+
+      {/* Page-level success / error messages */}
+      {pageMessage && (
+        <p
+          className={
+            pageMessageType === "success"
+              ? "page-message page-message-success"
+              : "page-message page-message-error"
+          }
+        >
+          {pageMessage}
+        </p>
+      )}
+
       {error && <p className="error-message">{error}</p>}
 
-      {/* Search and Filter Options */}
-      <div className="filters">
+      <div className="shop-filters">
         <input
-          placeholder="🔍 Search by title, description, category"
+          placeholder="Search campaigns..."
           value={search}
           onChange={(e) => setSearch(e.target.value.trimStart())}
         />
@@ -141,79 +209,128 @@ export default function BrowseCampaigns() {
       </div>
 
       {filteredCampaigns.length === 0 ? (
-        <p>No active campaigns available.</p>
+        <p className="no-data">No active campaigns available.</p>
       ) : (
-        <div className="campaign-table-wrap">
-          <table className="campaign-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Title & Description</th>
-                <th>Category</th>
-                <th>Goal</th>
-                <th>Raised</th>
-                <th>Progress</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCampaigns.map((c) => {
-                const pct = Math.min(
-                  100,
-                  Math.floor(((c.collectedAmount || 0) / (c.goalAmount || 1)) * 100)
-                );
-                return (
-                  <tr key={c.id}>
-                    <td>
-                      <img
-                        className="table-image"
-                        src={`${API_URL}/image/${c.id}`}
-                        alt={c.title}
-                        onError={(e) => {
-                          e.currentTarget.src = placeholderImg;
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <div className="table-title">{c.title}</div>
-                      <div className="table-desc">
-                        {(c.description || "").slice(0, 100)}
-                        {(c.description || "").length > 100 ? "…" : ""}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge">{c.category}</span>
-                    </td>
-                    <td>₹{c.goalAmount}</td>
-                    <td className="collected">₹{c.collectedAmount}</td>
-                    <td>
-                      <div className="progress-row">
-                        <div className="progress-bar">
-                          <div
-                            className="progress-fill"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                        <span className="progress-text">{pct}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge status active">{c.status}</span>
-                    </td>
-                    <td>
-                      <button
-                        className="donate-btn"
-                        onClick={() => handleDonate(c)}
-                      >
-                        Donate
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="campaign-grid">
+          {filteredCampaigns.map((c) => {
+            const pct = Math.min(
+              100,
+              Math.floor(((c.collectedAmount || 0) / (c.goalAmount || 1)) * 100)
+            );
+
+            return (
+              <div className="campaign-card" key={c.id}>
+                <img
+                  src={`${CAMPAIGN_API}/image/${c.id}`}
+                  alt={c.title}
+                  className="campaign-img"
+                  onError={(e) => (e.currentTarget.src = placeholderImg)}
+                />
+
+                <div className="campaign-content">
+                  <h3 className="campaign-title">{c.title}</h3>
+                  <p className="campaign-desc">
+                    {(c.description || "").slice(0, 80)}
+                    {(c.description || "").length > 80 && "…"}
+                  </p>
+
+                  <span className="category-tag">{c.category}</span>
+
+                  <div className="price-row">
+                    <span>Goal: ₹{c.goalAmount}</span>
+                    <span className="raised">Raised: ₹{c.collectedAmount}</span>
+                  </div>
+
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${pct}%` }}
+                    ></div>
+                  </div>
+                  <p className="progress-text">{pct}% funded</p>
+
+                  <button
+                    className="donate-btn"
+                    onClick={() => handleDonateClick(c)}
+                  >
+                    Donate Now
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && selectedCampaign && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3>Donate to {selectedCampaign.title}</h3>
+              <button className="modal-close" onClick={handleCloseModal}>
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <p className="modal-info">
+                Goal: <strong>₹{selectedCampaign.goalAmount}</strong> &nbsp; | &nbsp;
+                Raised: <strong>₹{selectedCampaign.collectedAmount || 0}</strong>
+              </p>
+              <p className="modal-info">
+                Remaining:{" "}
+                <strong>
+                  ₹
+                  {Math.max(
+                    0,
+                    Number(selectedCampaign.goalAmount || 0) -
+                      Number(selectedCampaign.collectedAmount || 0)
+                  )}
+                </strong>
+              </p>
+
+              <form className="modal-form" onSubmit={handleDonationSubmit}>
+                <label htmlFor="donationAmount">Amount (₹)</label>
+                <input
+                  id="donationAmount"
+                  type="number"
+                  min="1"
+                  value={amountInput}
+                  onChange={(e) => setAmountInput(e.target.value)}
+                  className="modal-input"
+                  required
+                />
+
+                <label htmlFor="donationMessage">
+                  Message / Description (optional)
+                </label>
+                <textarea
+                  id="donationMessage"
+                  className="modal-textarea"
+                  rows={3}
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Write a short note for the campaign creator..."
+                />
+
+                {formError && <p className="modal-error">{formError}</p>}
+
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    className="modal-btn secondary"
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="modal-btn primary">
+                    Confirm Donation
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -20,19 +20,16 @@ public class Donation {
     @JoinColumn(name = "campaign_id", nullable = false)
     private Campaign campaign;
 
-    @Column(name = "amount", nullable = false)
+    @Column(nullable = false)
     private double amount;
 
-    @Column(name = "donation_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime donationDate;
 
-    @Column(name = "message", length = 500)
-    private String message; // Optional message from donor
+    private String message;
 
-    // --- Getters & Setters ---
+    // Getters & Setters
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
     public Donor getDonor() { return donor; }
     public void setDonor(Donor donor) { this.donor = donor; }
 

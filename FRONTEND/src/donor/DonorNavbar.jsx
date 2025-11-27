@@ -34,7 +34,7 @@ export default function DonorNavBar() {
       {/* Horizontal Navbar */}
       <nav className="donor-navbar">
         <div className="donor-logo">
-          <span className="donor-logo-icon">❤️</span>
+          <span className="donor-logo-icon"></span>
           <span className="donor-logo-text">HopeRaise Donor</span>
         </div>
 

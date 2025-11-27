@@ -1,117 +1,125 @@
 /* ================================
-   Modern MyDonations Styles
+   MyDonations Page (Table View)
    ================================ */
 
 .browsecampaigns-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 30px;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8f9fa;
-  min-height: calc(100vh - 140px);
+  padding: 28px 20px 40px;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fb;
+  min-height: calc(100vh - 120px);
 }
 
 /* Heading */
 .browsecampaigns-container h2 {
   text-align: center;
-  font-size: 2.5rem;
-  color: #0F4C75;
-  margin-bottom: 40px;
-  font-weight: 700;
+  font-size: 2.1rem;
+  color: #0f4c75;
+  margin-bottom: 28px;
+  font-weight: 800;
   position: relative;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .browsecampaigns-container h2::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #3282B8, #0F4C75);
-  border-radius: 2px;
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(90deg, #3282b8, #0f4c75);
+  border-radius: 999px;
 }
 
-/* Error Message */
+/* Error message */
 .error-message {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #dc2626;
-  padding: 15px 20px;
+  max-width: 900px;
+  margin: 0 auto 18px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 14px;
   border-radius: 12px;
   text-align: center;
-  margin-bottom: 25px;
-  font-weight: 600;
-  border: 1px solid #fecaca;
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.1);
+  font-weight: 500;
+  box-shadow: 0 4px 14px rgba(185, 28, 28, 0.08);
 }
 
-/* Empty State */
+/* Empty state */
 .browsecampaigns-container > p {
+  max-width: 900px;
+  margin: 10px auto 0;
   text-align: center;
   color: #6b7280;
-  font-size: 1.1rem;
-  padding: 40px;
+  font-size: 1rem;
+  padding: 24px 16px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
 }
 
-/* Table Container */
+/* Table wrapper */
 .campaign-table-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
   border: 1px solid #e5e7eb;
+  overflow: hidden;
 }
 
-/* Table Styling */
+/* Table base */
 .campaign-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
+/* Headings */
 .campaign-table thead th {
-  background: #3282B8;
+  background: #0f4c75;
   color: #ffffff;
-  padding: 16px 12px;
+  padding: 14px 10px;
   text-align: center;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid #0F4C75;
+  border-bottom: 2px solid #0b3a57;
 }
 
-.campaign-table thead th:nth-child(1) { width: 40%; } /* Campaign */
-.campaign-table thead th:nth-child(2) { width: 15%; } /* Category */
-.campaign-table thead th:nth-child(3) { width: 15%; } /* Donated */
-.campaign-table thead th:nth-child(4) { width: 15%; } /* Goal */
-.campaign-table thead th:nth-child(5) { width: 7%; }  /* Start */
-.campaign-table thead th:nth-child(6) { width: 8%; }  /* End */
+/* Column widths (7 columns) */
+.campaign-table thead th:nth-child(1) { width: 32%; } /* Campaign */
+.campaign-table thead th:nth-child(2) { width: 12%; } /* Category */
+.campaign-table thead th:nth-child(3) { width: 12%; } /* Donated */
+.campaign-table thead th:nth-child(4) { width: 12%; } /* Goal */
+.campaign-table thead th:nth-child(5) { width: 14%; } /* Donation Date */
+.campaign-table thead th:nth-child(6) { width: 9%;  } /* Start */
+.campaign-table thead th:nth-child(7) { width: 9%;  } /* End */
 
+/* Body rows */
 .campaign-table tbody tr {
   border-bottom: 1px solid #e5e7eb;
-  height: 80px;
 }
 
 .campaign-table tbody tr:nth-child(even) {
-  background: #f8f9fa;
+  background: #f9fafb;
 }
 
 .campaign-table tbody tr:hover {
   background: #e3f2fd;
 }
 
+/* Cells */
 .campaign-table tbody td {
-  padding: 12px;
+  padding: 12px 10px;
   vertical-align: middle;
   color: #374151;
   font-size: 0.9rem;
-  text-align: center;
   border-right: 1px solid #e5e7eb;
 }
 
@@ -119,118 +127,86 @@
   border-right: none;
 }
 
-/* Title and Description */
+/* Campaign name + description */
 .table-title {
-  font-weight: 600;
-  color: #0F4C75;
+  font-weight: 650;
+  color: #0f4c75;
   margin-bottom: 4px;
-  font-size: 0.9rem;
-  line-height: 1.2;
+  font-size: 0.95rem;
+  text-align: left;
 }
 
 .table-desc {
   color: #6b7280;
   font-size: 0.8rem;
-  line-height: 1.3;
-  margin-bottom: 6px;
+  line-height: 1.35;
+  text-align: left;
 }
 
-/* Badges */
+/* Category badge */
 .badge {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
   background: #e0f2fe;
-  color: #0277bd;
+  color: #0369a1;
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: capitalize;
 }
 
-/* Amount Styling */
+/* Amount columns: align right */
 .campaign-table tbody td:nth-child(3),
 .campaign-table tbody td:nth-child(4) {
   font-weight: 600;
-  color: #374151;
   font-size: 0.9rem;
+  text-align: right;
 }
 
 .raised {
   color: #059669;
 }
 
-/* Date Styling */
+/* Date columns */
 .campaign-table tbody td:nth-child(5),
-.campaign-table tbody td:nth-child(6) {
-  color: #6b7280;
+.campaign-table tbody td:nth-child(6),
+.campaign-table tbody td:nth-child(7) {
   font-size: 0.8rem;
-  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* Responsive */
+@media (max-width: 1024px) {
   .campaign-table-wrap {
     overflow-x: auto;
   }
-  
+
   .campaign-table {
-    min-width: 800px;
+    min-width: 900px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .browsecampaigns-container {
-    padding: 20px 15px;
+    padding: 20px 12px 32px;
   }
 
   .browsecampaigns-container h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-  }
-
-  .campaign-table thead th {
-    padding: 15px 12px;
-    font-size: 0.85rem;
-  }
-
-  .campaign-table tbody td {
-    padding: 15px 12px;
-    font-size: 0.9rem;
-  }
-
-  .table-title {
-    font-size: 1rem;
-  }
-
-  .table-desc {
-    font-size: 0.85rem;
+    font-size: 1.9rem;
+    margin-bottom: 20px;
   }
 }
 
-@media (max-width: 480px) {
-  .browsecampaigns-container {
-    padding: 15px 10px;
-  }
-
-  .browsecampaigns-container h2 {
-    font-size: 1.8rem;
-  }
-
-  .campaign-table thead th,
-  .campaign-table tbody td {
-    padding: 12px 8px;
-  }
-}
-
-/* Animation for page load */
+/* Subtle page load animation */
 .browsecampaigns-container {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUpMyDonations 0.5s ease-out;
 }
 
-@keyframes fadeInUp {
+@keyframes fadeInUpMyDonations {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
